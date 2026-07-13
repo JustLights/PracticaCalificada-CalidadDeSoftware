@@ -82,7 +82,7 @@ test("rechaza titulo que no es string (numero)", async () => {
 });
 
 
-test("rechaza titulo que no es string (numero)", async () => {
+test("propaga el error si la base de datos falla al listar tareas", async () => {
     const fakePool = {
         query: jest.fn().mockRejectedValue(
     new Error("connection refused")
