@@ -27,8 +27,10 @@ describe("createTask (prueba unitaria)", () => {
 
 
 test("rechaza la tarea si el titulo esta vacio", async () => {
+
   // Pool falso sin respuesta programada: si el servicio lo llamara,
   // seria un defecto de diseno (no debe tocar la BD con datos invalidos).
+  
   const fakePool = { query: jest.fn() };
 
   // Esperamos que la promesa sea RECHAZADA (que lance un error).
@@ -40,3 +42,4 @@ test("rechaza la tarea si el titulo esta vacio", async () => {
   // la validacion detuvo la operacion antes.
   expect(fakePool.query).not.toHaveBeenCalled();
 });
+
