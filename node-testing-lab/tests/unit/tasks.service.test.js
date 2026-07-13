@@ -60,3 +60,15 @@ test("elimina los espacios sobrantes del titulo", async () => {
     // toHaveBeenCalledWith inspecciona los argumentos reales.
   );
 });
+
+const { getTaskById } = require("../../src/services/tasks.service");
+
+test("getTaskById devuelve null cuando no hay resultados", async () => {
+  // Simulamos que la BD no devolvio ninguna fila.
+  const fakePool = {
+    query: jest.fn().mockResolvedValue({ rows: [] }),
+  };
+
+  const result = await getTaskById(fakePool, 999);
+  expect(result).toBeNull();
+});
