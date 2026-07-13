@@ -24,10 +24,10 @@ async function getTaskById(pool, id) {
 }
 
 async function createTask(pool, { title, priority } = {}) {
-  if (!title || typeof title !== "string" || !title.trim()) {
-    const err = new Error("El titulo es obligatorio");
-    err.status = 400;
-    throw err;
+  //if (!title || typeof title !== "string" || !title.trim()) {
+  //  const err = new Error("El titulo es obligatorio");
+  //  err.status = 400;
+  //  throw err;
   }
 
   const { rows } = await pool.query(
