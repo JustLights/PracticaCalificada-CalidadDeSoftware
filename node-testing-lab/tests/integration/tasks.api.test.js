@@ -117,19 +117,33 @@ describe("DELETE /tasks/:id (integracion con PostgreSQL real)", () => {
 describe("GET /tasks (integracion con PostgreSQL real)", () => {
 
   test("devuelve todas las tareas ordenadas por ID ascendente", async () => {
-    // 1. PREPARAR (Arrange): insertar tres tareas
     await request(app).post("/tasks").send({ title: "Primera" });
     await request(app).post("/tasks").send({ title: "Segunda" });
     await request(app).post("/tasks").send({ title: "Tercera" });
 
-    // 2. ACTUAR (Act)
     const res = await request(app).get("/tasks");
 
-    // 3. VERIFICAR (Assert)
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(3);
     expect(res.body[0].title).toBe("Primera");
     expect(res.body[1].title).toBe("Segunda");
     expect(res.body[2].title).toBe("Tercera");
+  });
+});
+
+describe("POST /tasks con prioridad (integracion con PostgreSQL real)", () => {
+
+  test("guarda la prioridad en la base de datos", async () => {
+    const res = await request(app)
+      .post("/tasks")
+      .send({ title: "Urgente", priority: "alta" });
+
+    expect(res.body.priority).toBe("alta");
+
+    const { rows } = await pool.query(
+      "SELECT priority FROM tasks WHERE id = $1",
+      [res.body.id]
+    );
+    expect(rows[0].priority).toBe("alta");
   });
 });

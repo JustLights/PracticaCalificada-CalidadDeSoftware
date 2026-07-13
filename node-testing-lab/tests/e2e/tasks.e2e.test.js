@@ -13,10 +13,11 @@ describe("Flujo completo de una tarea (E2E)", () => {
     const resCrear = await fetch(`${BASE_URL}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: "Preparar la practica" }),
+      body: JSON.stringify({ title: "Preparar la practica", priority: "alta" }),
     });
     expect(resCrear.status).toBe(201);
     const tarea = await resCrear.json();
+    expect(tarea.priority).toBe("alta");
     const id = tarea.id;
 
     const resConsultar = await fetch(`${BASE_URL}/tasks/${id}`);

@@ -10,20 +10,20 @@
 
 async function listTasks(pool) {
   const { rows } = await pool.query(
-    "SELECT id, title, done, created_at FROM tasks ORDER BY id"
+    "SELECT id, title, done, priority, created_at FROM tasks ORDER BY id"
   );
   return rows;
 }
 
 async function getTaskById(pool, id) {
   const { rows } = await pool.query(
-    "SELECT id, title, done, created_at FROM tasks WHERE id = $1",
+    "SELECT id, title, done, priority, created_at FROM tasks WHERE id = $1",
     [id]
   );
   return rows[0] || null;
 }
 
-async function createTask(pool, { title } = {}) {
+async function createTask(pool, { title, priority } = {}) {
   if (!title || typeof title !== "string" || !title.trim()) {
     const err = new Error("El titulo es obligatorio");
     err.status = 400;
@@ -31,22 +31,23 @@ async function createTask(pool, { title } = {}) {
   }
 
   const { rows } = await pool.query(
-    "INSERT INTO tasks (title, done) VALUES ($1, false) RETURNING id, title, done, created_at",
-    [title.trim()]
+    "INSERT INTO tasks (title, done, priority) VALUES ($1, false, $2) RETURNING id, title, done, priority, created_at",
+    [title.trim(), priority || "media"]
   );
   return rows[0];
 }
 
-async function updateTask(pool, id, { title, done } = {}) {
+async function updateTask(pool, id, { title, done, priority } = {}) {
   const existing = await getTaskById(pool, id);
   if (!existing) return null;
 
   const newTitle = title !== undefined ? title : existing.title;
   const newDone = done !== undefined ? done : existing.done;
+  const newPriority = priority !== undefined ? priority : existing.priority;
 
   const { rows } = await pool.query(
-    "UPDATE tasks SET title = $1, done = $2 WHERE id = $3 RETURNING id, title, done, created_at",
-    [newTitle, newDone, id]
+    "UPDATE tasks SET title = $1, done = $2, priority = $3 WHERE id = $4 RETURNING id, title, done, priority, created_at",
+    [newTitle, newDone, newPriority, id]
   );
   return rows[0];
 }

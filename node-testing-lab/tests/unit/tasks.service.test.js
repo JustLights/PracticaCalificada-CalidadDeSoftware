@@ -2,26 +2,31 @@ const { createTask } = require("../../src/services/tasks.service");
 
 describe("createTask (prueba unitaria)", () => {
   test("crea la tarea cuando el titulo es valido", async () => {
-    // jest.fn() crea una funcion espia que registra sus llamadas.
-    // mockResolvedValue programa la respuesta simulada de la BD.
     const fakePool = {
       query: jest.fn().mockResolvedValue({
-        rows: [{ id: 1, title: "Estudiar", done: false }],
+        rows: [{ id: 1, title: "Estudiar", done: false, priority: "media" }],
       }),
     };
 
-    // 1. PREPARAR (Arrange): construimos un pool falso.
-    // 2. ACTUAR (Act): invocamos la unidad bajo prueba.
     const result = await createTask(
       fakePool,
       { title: "Estudiar" }
     );
 
-    // 3. VERIFICAR (Assert): comprobamos el resultado
-    // y la interaccion con la dependencia.
     expect(result.id).toBe(1);
     expect(result.title).toBe("Estudiar");
     expect(fakePool.query).toHaveBeenCalledTimes(1);
+  });
+
+  test("crea la tarea con la prioridad indicada", async () => {
+    const fakePool = {
+      query: jest.fn().mockResolvedValue({
+        rows: [{ id: 1, title: "Estudiar", done: false, priority: "alta" }],
+      }),
+    };
+
+    const result = await createTask(fakePool, { title: "Estudiar", priority: "alta" });
+    expect(result.priority).toBe("alta");
   });
 });
 
@@ -52,12 +57,9 @@ test("elimina los espacios sobrantes del titulo", async () => {
 
   await createTask(fakePool, { title: "   Estudiar   " });
 
-  // expect.stringContaining permite validar el SQL sin
-  // acoplarse a su texto exacto.
   expect(fakePool.query).toHaveBeenCalledWith(
     expect.stringContaining("INSERT"),
-    ["Estudiar"]
-    // toHaveBeenCalledWith inspecciona los argumentos reales.
+    ["Estudiar", "media"]
   );
 });
 
