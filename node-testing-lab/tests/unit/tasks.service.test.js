@@ -72,3 +72,11 @@ test("getTaskById devuelve null cuando no hay resultados", async () => {
   const result = await getTaskById(fakePool, 999);
   expect(result).toBeNull();
 });
+
+
+test("rechaza titulo que no es string (numero)", async () => {
+    const fakePool = { query: jest.fn() };
+    await expect(createTask(fakePool, { title: 42 }))
+        .rejects.toThrow("El titulo es obligatorio");
+    expect(fakePool.query).not.toHaveBeenCalled();
+});
