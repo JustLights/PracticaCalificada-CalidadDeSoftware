@@ -30,7 +30,7 @@ test("rechaza la tarea si el titulo esta vacio", async () => {
 
   // Pool falso sin respuesta programada: si el servicio lo llamara,
   // seria un defecto de diseno (no debe tocar la BD con datos invalidos).
-  
+
   const fakePool = { query: jest.fn() };
 
   // Esperamos que la promesa sea RECHAZADA (que lance un error).
@@ -43,3 +43,20 @@ test("rechaza la tarea si el titulo esta vacio", async () => {
   expect(fakePool.query).not.toHaveBeenCalled();
 });
 
+test("elimina los espacios sobrantes del titulo", async () => {
+  const fakePool = {
+    query: jest.fn().mockResolvedValue({
+      rows: [{ id: 1, title: "Estudiar" }],
+    }),
+  };
+
+  await createTask(fakePool, { title: "   Estudiar   " });
+
+  // expect.stringContaining permite validar el SQL sin
+  // acoplarse a su texto exacto.
+  expect(fakePool.query).toHaveBeenCalledWith(
+    expect.stringContaining("INSERT"),
+    ["Estudiar"]
+    // toHaveBeenCalledWith inspecciona los argumentos reales.
+  );
+});
