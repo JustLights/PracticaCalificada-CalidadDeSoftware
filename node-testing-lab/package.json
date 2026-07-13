@@ -1,0 +1,20 @@
+{
+  "name": "node-testing-lab",
+  "version": "1.0.0",
+  "description": "Laboratorio de calidad de software: API REST de tareas con pruebas unitarias, de integracion y E2E, orquestado con Docker.",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration --runInBand",
+    "test:e2e": "jest tests/e2e --runInBand"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}
