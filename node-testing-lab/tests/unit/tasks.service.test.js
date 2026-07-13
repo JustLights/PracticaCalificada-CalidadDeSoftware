@@ -61,10 +61,9 @@ test("elimina los espacios sobrantes del titulo", async () => {
   );
 });
 
-const { getTaskById } = require("../../src/services/tasks.service");
+const { getTaskById, listTasks } = require("../../src/services/tasks.service");
 
 test("getTaskById devuelve null cuando no hay resultados", async () => {
-  // Simulamos que la BD no devolvio ninguna fila.
   const fakePool = {
     query: jest.fn().mockResolvedValue({ rows: [] }),
   };
@@ -73,7 +72,6 @@ test("getTaskById devuelve null cuando no hay resultados", async () => {
   expect(result).toBeNull();
 });
 
-
 test("rechaza titulo que no es string (numero)", async () => {
     const fakePool = { query: jest.fn() };
     await expect(createTask(fakePool, { title: 42 }))
@@ -81,11 +79,11 @@ test("rechaza titulo que no es string (numero)", async () => {
     expect(fakePool.query).not.toHaveBeenCalled();
 });
 
-
 test("propaga el error si la base de datos falla al listar tareas", async () => {
     const fakePool = {
-        query: jest.fn().mockRejectedValue(
-    new Error("connection refused")
-  ),
-};
+        query: jest.fn().mockRejectedValue(new Error("connection refused")),
+    };
+
+    await expect(listTasks(fakePool)).rejects.toThrow("connection refused");
+    expect(fakePool.query).toHaveBeenCalledTimes(1);
 });
