@@ -80,3 +80,12 @@ test("rechaza titulo que no es string (numero)", async () => {
         .rejects.toThrow("El titulo es obligatorio");
     expect(fakePool.query).not.toHaveBeenCalled();
 });
+
+
+test("rechaza titulo que no es string (numero)", async () => {
+    const fakePool = {
+        query: jest.fn().mockRejectedValue(
+    new Error("connection refused")
+  ),
+};
+});
